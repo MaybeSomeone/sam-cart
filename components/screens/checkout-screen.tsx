@@ -10,7 +10,7 @@ const cart = [
   { product: products[3], spec: '混合口味 6枚', qty: 1 },
 ]
 
-export function CheckoutScreen() {
+export function CheckoutScreen({ onBack }: { onBack?: () => void }) {
   const goods = cart.reduce((sum, i) => sum + i.product.price * i.qty, 0)
   const agentFee = Math.round(goods * 0.08 * 100) / 100
   const shipping = goods >= 299 ? 0 : 15
@@ -24,6 +24,7 @@ export function CheckoutScreen() {
         <div className="flex items-center px-3 py-2">
           <button
             type="button"
+            onClick={onBack}
             className="flex h-9 w-9 items-center justify-center rounded-full text-foreground"
           >
             <ChevronLeft className="h-5 w-5" />

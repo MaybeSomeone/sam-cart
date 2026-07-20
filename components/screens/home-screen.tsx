@@ -51,7 +51,7 @@ export function HomeScreen({ onOpenProduct }: { onOpenProduct: (p: Product) => v
       </div>
 
       {/* Scroll area */}
-      <div className="flex-1 overflow-y-auto pb-4">
+      <div className="flex-1 overflow-y-auto pb-24">
         {/* Banner */}
         <div className="px-4 pt-3">
           <div className="relative h-36 overflow-hidden rounded-2xl shadow-sm">

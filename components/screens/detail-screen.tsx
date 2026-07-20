@@ -28,7 +28,15 @@ function useCountdown(initial: number) {
   return [h, m, s]
 }
 
-export function DetailScreen({ product }: { product: Product }) {
+export function DetailScreen({
+  product,
+  onBack,
+  onCart,
+}: {
+  product: Product
+  onBack?: () => void
+  onCart?: () => void
+}) {
   const [spec, setSpec] = useState(0)
   const [rulesOpen, setRulesOpen] = useState(false)
   const [h, m, s] = useCountdown(45 * 60 + 20)
@@ -60,6 +68,7 @@ export function DetailScreen({ product }: { product: Product }) {
           <div className="flex items-center justify-between px-4 py-1">
             <button
               type="button"
+              onClick={onBack}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-card/80 text-foreground shadow-sm backdrop-blur"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -203,6 +212,7 @@ export function DetailScreen({ product }: { product: Product }) {
         </button>
         <button
           type="button"
+          onClick={onCart}
           className="flex flex-col items-center gap-0.5 px-1 text-muted-foreground"
         >
           <ShoppingCart className="h-5 w-5" />

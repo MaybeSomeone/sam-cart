@@ -3,25 +3,24 @@
 import { useState } from 'react'
 import { PhoneFrame } from '@/components/phone-frame'
 import { HomeScreen } from '@/components/screens/home-screen'
+import { CategoryScreen } from '@/components/screens/category-screen'
+import { CartScreen } from '@/components/screens/cart-screen'
+import { ProfileScreen } from '@/components/screens/profile-screen'
 import { DetailScreen } from '@/components/screens/detail-screen'
 import { CheckoutScreen } from '@/components/screens/checkout-screen'
+import { BottomTabBar, type MainTab } from '@/components/bottom-tab-bar'
 import { products, type Product } from '@/lib/data'
 
-const tabs = [
-  { key: 'home', label: '首页' },
-  { key: 'detail', label: '商品详情' },
-  { key: 'checkout', label: '确认订单' },
-] as const
-
-type TabKey = (typeof tabs)[number]['key']
+type Stack = 'detail' | 'checkout' | null
 
 export default function Page() {
-  const [tab, setTab] = useState<TabKey>('home')
+  const [tab, setTab] = useState<MainTab>('home')
+  const [stack, setStack] = useState<Stack>(null)
   const [activeProduct, setActiveProduct] = useState<Product>(products[0])
 
   const openProduct = (p: Product) => {
     setActiveProduct(p)
-    setTab('detail')
+    setStack('detail')
   }
 
   return (
@@ -33,28 +32,36 @@ export default function Page() {
         </p>
       </header>
 
-      {/* Segmented tab switcher */}
-      <div className="flex w-full max-w-[393px] gap-1 rounded-full bg-card p-1 shadow-sm">
-        {tabs.map((t) => (
-          <button
-            key={t.key}
-            type="button"
-            onClick={() => setTab(t.key)}
-            className={`flex-1 rounded-full py-2 text-sm font-semibold transition-colors ${
-              tab === t.key
-                ? 'bg-primary text-primary-foreground shadow'
-                : 'text-muted-foreground'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
       <PhoneFrame>
+        {/* Main tab screens */}
         {tab === 'home' && <HomeScreen onOpenProduct={openProduct} />}
-        {tab === 'detail' && <DetailScreen product={activeProduct} />}
-        {tab === 'checkout' && <CheckoutScreen />}
+        {tab === 'category' && <CategoryScreen onOpenProduct={openProduct} />}
+        {tab === 'cart' && <CartScreen onCheckout={() => setStack('checkout')} />}
+        {tab === 'profile' && <ProfileScreen />}
+
+        {/* Bottom tab bar (hidden when a screen is pushed) */}
+        {stack === null && (
+          <BottomTabBar active={tab} onChange={setTab} cartCount={3} />
+        )}
+
+        {/* Pushed screens over the tab bar */}
+        {stack === 'detail' && (
+          <div className="absolute inset-0 z-30 bg-muted">
+            <DetailScreen
+              product={activeProduct}
+              onBack={() => setStack(null)}
+              onCart={() => {
+                setStack(null)
+                setTab('cart')
+              }}
+            />
+          </div>
+        )}
+        {stack === 'checkout' && (
+          <div className="absolute inset-0 z-30 bg-muted">
+            <CheckoutScreen onBack={() => setStack(null)} />
+          </div>
+        )}
       </PhoneFrame>
     </main>
   )
